@@ -1,7 +1,7 @@
 const asyncHandler = (func) =>{
-    (req,res,next)=>{
-        Promise
-        .resolve(func)
-        .catch((e)=>(next(e)))
+   return (req,res,next)=>{
+        Promise.resolve(func(req,res,next)).catch((e)=>(next(e)))
     }
 }
+
+export {asyncHandler}

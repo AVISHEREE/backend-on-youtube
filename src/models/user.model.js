@@ -2,7 +2,7 @@ import mongoose , {Schema} from "mongoose";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 const userschema = new Schema({
-    usename :{
+    userName :{
         type:String,
         required:true,
         unique:true,
@@ -17,7 +17,7 @@ const userschema = new Schema({
         lowercase:true,
         trim:true,
     },
-    fullname :{
+    fullName :{
         type:String,
         required:true,
         lowercase:true,
@@ -28,7 +28,7 @@ const userschema = new Schema({
         type:String,
         required:true,
     },
-    coveriamge :{
+    coverImage :{
         type:String,
     },
     watchHistory:{
@@ -39,7 +39,7 @@ const userschema = new Schema({
         type:string,
         required:[true,'password is required']
     },
-    refreshtoken:{
+    refreshToken:{
         type:string
     }
 
@@ -50,7 +50,7 @@ const userschema = new Schema({
 )
 userschema.pre("save", async function(next) {
     if(!this.isModified('password')) return next();
-    this.password = bcrypt.hash(this.password , 8)
+    this.password = await bcrypt.hash(this.password , 8) 
     next()
 });
 

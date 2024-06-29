@@ -15,4 +15,9 @@ app.get('/',(req,res)=>{
     res.send("hello world")
 })
 
+// import userRouter from './routes/user.routes.js';//imported router
+import  userRouter  from './routes/user.routes.js';
+ 
+app.use('/api/v1/users',userRouter);//redirecting user to user toutes
+
 export default app
