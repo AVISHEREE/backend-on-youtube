@@ -36,11 +36,11 @@ const userschema = new Schema({
         ref:"Video"
     },
     password:{
-        type:string,
+        type: String,
         required:[true,'password is required']
     },
     refreshToken:{
-        type:string
+        type:String
     }
 
 },
