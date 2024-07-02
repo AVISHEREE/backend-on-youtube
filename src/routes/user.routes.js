@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { registerUser } from "../controllers/user.controller.js";
+import { logInUser, registerUser, logoutUser } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
+import { veryfyJWT } from "../middleware/auth.middleware.js";
+import { verify } from "jsonwebtoken";
 const router = Router();
 
 
@@ -17,5 +19,9 @@ router.route('/register').post(
     ]),
     registerUser 
 );
+
+router.route('/login').post(logInUser)
+//secured routes
+router.route('/logout').post( veryfyJWT ,logoutUser)
 
 export default router
