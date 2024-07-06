@@ -2,7 +2,7 @@ import { Router } from "express";
 import { logInUser, registerUser, logoutUser, refreshAccessToken } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { veryfyJWT } from "../middleware/auth.middleware.js";
-import { verify } from "jsonwebtoken";
+
 const router = Router();
 
 
