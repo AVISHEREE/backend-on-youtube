@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
+import bcrypt from 'bcrypt'
 import { upload } from "../middleware/multer.middleware.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -8,6 +9,7 @@ import { response } from "express";
 import jwt from 'jsonwebtoken'
 
 const generateAccessTokenAndRefreshToken = async (userId)=>{
+   console.log('user._id',userId);
    try{
       const user = await User.findById(userId);
       const accessToken = user.generateAccessToken()
@@ -17,6 +19,7 @@ const generateAccessTokenAndRefreshToken = async (userId)=>{
      return {accessToken,refreshToken}
    }
    catch(e){
+      console.log(e);
       throw new ApiError(500,'something went wrong while generating access token and refresh token')
    }
 }
@@ -33,15 +36,16 @@ const registerUser = asyncHandler( async (req,res) =>{
     // return res
 
     console.log('Received a POST request to /register');
-    const  {fullName,email,password,userName} =  req.body
+    
+    const  {fullName,email,password,username} =  req.body
    //  console.log('email',email);
-     if([fullName,email,password,userName].some((feild)=>
+     if([fullName,email,password,username].some((feild)=>
         feild?.trim() === ""
      )){
         throw new ApiError(400,"full name required")
      }
    const existedUser = await User.findOne({
-      $or:[{userName},{email}]
+      $or:[{username},{email}]
      })
      if(existedUser) {
       throw new ApiError(409,"username and email already exists")
@@ -71,7 +75,7 @@ const registerUser = asyncHandler( async (req,res) =>{
       coverImage:coverImage?.url||"",
       email,
       password,
-      userName:userName.toLowerCase()
+      username:username.toLowerCase()
    })
 
    const createdUser = await User.findById(user._id).select(
@@ -95,20 +99,22 @@ const logInUser = asyncHandler ( async (req,res) =>{
    //give access and refresh Token 
    //send cookies
    //send a response
-   const { password , userName , email } = req.body
-   if(!userName || !email){
+   const { password , username , email } = await req.body
+   console.log(req.body);
+   if(!username || !email){
       throw new ApiError(400,'username or email is required')
    }
-   
+   console.log(req.body);
   const user = await User.findOne({
-      $or:[{userName},{email}]
+      $or:[{username},{email}]
    })
 
    if(!user){
       throw new ApiError(404,'user not exist')
    }
 
-   const isPasswordValid = await isPasswordCorrect(password)
+   const isPasswordValid = await user.isPasswordCorrect(password);
+   // const isPasswordValid = await bcrypt.compare(password, user.password);
    if(!isPasswordValid){
       throw new ApiError(401,'password inValid')
    }

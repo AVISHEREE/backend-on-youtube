@@ -20,7 +20,10 @@ router.route('/register').post(
     registerUser 
 );
 
-router.route('/login').post(logInUser)
+
+
+router.route('/login').post(logInUser);
+
 //secured routes
 router.route('/logout').post( veryfyJWT ,logoutUser)
 router.route('/refreshtoken').post(refreshAccessToken)
