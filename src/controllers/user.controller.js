@@ -161,8 +161,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,
       },
     },
     {
@@ -181,9 +181,10 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
+  console.log(req.cookies.refreshToken||req.body.refreshToken);
+  
   try {
-    const incomingRefreshToken =
-      req.cookies.refreshToken || req.body.refreshToken;
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if (!incomingRefreshToken) {
       throw new ApiError(401, "refresh token not found");
     }
@@ -222,8 +223,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
           "access token generated",
         ),
       );
-  } catch (error) {}
-  throw new ApiError(401, error?.message || "invalid refresh token");
+  } catch (error) {
+    throw new ApiError(401, error?.message || "invalid refresh token");
+  }
+
 });
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
